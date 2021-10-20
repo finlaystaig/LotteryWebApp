@@ -1,10 +1,8 @@
 # IMPORTS
 import logging
 from functools import wraps
-
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import current_user
-
 from app import db
 from models import User
 from users.forms import RegisterForm
