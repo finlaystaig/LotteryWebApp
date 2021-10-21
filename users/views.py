@@ -57,7 +57,7 @@ def login():
 
     if form.validate_on_submit():
 
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.username.data).first()
 
         if not user or not check_password_hash(user.password, form.password.data):
             flash('Please check your login details and try again')
@@ -71,15 +71,17 @@ def login():
         db.session.add(user)
         db.session.commit()
 
-        return lottery()
+        return profile()
 
     return render_template('login.html', form=form)
+
 
 # view logout
 @users_blueprint.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
 
 # view user profile
 @users_blueprint.route('/profile')
