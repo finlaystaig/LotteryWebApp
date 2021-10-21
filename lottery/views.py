@@ -23,7 +23,7 @@ def lottery():
 
     decrypted_draws = []
 
-    print(draw_copies)
+
     for d in draw_copies:
         d.view_draw(draw_key)
         decrypted_draws.append(d)
@@ -54,14 +54,21 @@ def add_draw():
 @lottery_blueprint.route('/view_draws', methods=['POST'])
 def view_draws():
     # get all draws that have not been played [played=0]
-    playable_draws = Draw.query.filter_by(played=False).all()  # TODO: filter playable draws for current user
+    draws = Draw.query.filter_by(played=False).all()  # TODO: filter playable draws for current user
 
-    print("playable draws",playable_draws)
+
+    draw_copies = list(map(lambda x: copy.deepcopy(x), draws))
+
+    decrypted_draws = []
+
+    for d in draw_copies:
+        d.view_draw(draw_key)
+        decrypted_draws.append(d)
 
     # if playable draws exist
-    if len(playable_draws) != 0:
+    if len(draws) != 0:
         # re-render lottery page with playable draws
-        return render_template('lottery.html', playable_draws=playable_draws)
+        return render_template('lottery.html', playable_draws=decrypted_draws)
     else:
         flash('No playable draws.')
         return lottery()
