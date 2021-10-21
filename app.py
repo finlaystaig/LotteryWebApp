@@ -22,7 +22,7 @@ def index():
 # ERROR PAGE VIEWS
 
 @app.errorhandler(400)
-def page_forbidden(error):
+def bad_request(error):
     return render_template('400.html'), 400
 
 
@@ -42,7 +42,7 @@ def internal_error(error):
 
 
 @app.errorhandler(503)
-def page_forbidden(error):
+def service_unavailable(error):
     return render_template('503.html'), 503
 
 
