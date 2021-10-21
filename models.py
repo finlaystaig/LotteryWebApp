@@ -108,4 +108,6 @@ def init_db():
                  role="user")
 
     db.session.add(admin)
+    db.session.add(bob)
+    db.session.add(carol)
     db.session.commit()
