@@ -16,4 +16,3 @@ WTForms
 cryptography
 Flask-WTF
 email-validator
-Crypto

@@ -26,6 +26,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(100), nullable=False)
     pin_key = db.Column(db.String(100), nullable=False)
 
+
     # User activity information
     registered_on = db.Column(db.DateTime, nullable=True)
     last_logged_in = db.Column(db.DateTime, nullable=True)
@@ -91,23 +92,7 @@ def init_db():
                  phone='0191-123-4567',
                  role='admin')
 
-    bob = User(email="bob@email.com",
-               password="Pwd123456&",
-               pin_key="5NMO6KPHI5OY7SYHZJJ5K76RVNQRBYWG",
-               firstname="Bob",
-               lastname="Brown",
-               phone="0191-987-4321",
-               role="user")
-
-    carol = User(email="carol@email.com",
-                 password="caroL$$987",
-                 pin_key="NJC2Q4YVK3JPQCKBVVFFJABDAZTYJPHL",
-                 firstname="Carol",
-                 lastname="Smith",
-                 phone="0191-456-7654",
-                 role="user")
-
     db.session.add(admin)
-    db.session.add(bob)
-    db.session.add(carol)
     db.session.commit()
+
+

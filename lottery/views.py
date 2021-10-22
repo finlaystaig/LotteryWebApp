@@ -1,7 +1,9 @@
 # IMPORTS
 import copy
 import logging
+
 from flask import Blueprint, render_template, request, flash
+
 from app import db
 from models import Draw, User
 
@@ -17,9 +19,10 @@ draw_key = user.draw_key
 @lottery_blueprint.route('/lottery')
 def lottery():
     draws = Draw.query.all()
-    draw_copies = list(map(lambda x: copy.deepcopy(x), draws))
+    draw_copies = list(map(lambda x: copy.deepcopy(x),draws))
 
     decrypted_draws = []
+
 
     for d in draw_copies:
         d.view_draw(draw_key)
@@ -52,6 +55,7 @@ def add_draw():
 def view_draws():
     # get all draws that have not been played [played=0]
     draws = Draw.query.filter_by(played=False).all()  # TODO: filter playable draws for current user
+
 
     draw_copies = list(map(lambda x: copy.deepcopy(x), draws))
 
@@ -95,3 +99,5 @@ def play_again():
 
     flash("All played draws deleted.")
     return lottery()
+
+
