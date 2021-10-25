@@ -45,6 +45,8 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
+        logging.warning('SECURITY - User registration [%s, %s]', form.email.data, request.remote_addr)
+
         # sends user to login page
         return redirect(url_for('users.login'))
     # if request method is GET or form not valid re-render signup page
@@ -67,8 +69,11 @@ def login():
         user = User.query.filter_by(email=form.username.data).first()
 
         if not user or not check_password_hash(user.password, form.password.data):
-            if session['logins']==3:
+            if session['logins'] == 3:
                 flash("Too many incorrect logins.")
+
+                logging.warning('SECURITY - Too many incorrect Logins [%s, %s, %s]',form.email.data,
+                                request.remote_addr)
             elif session['logins']==2:
                 flash("Please check ur login details and try again. 1 attempt remaining")
             else:
@@ -86,7 +91,13 @@ def login():
             db.session.add(user)
             db.session.commit()
 
-            return profile()
+            logging.warning('SECURITY - Log in [%s, %s, %s]', current_user.id, current_user.email, request.remote_addr)
+
+            if current_user.role == "admin":
+                return redirect("admin")
+            else:
+                return redirect("profile")
+
         else:
             flash("You have supplied an invalid 2FA token!", "danger")
 
@@ -98,6 +109,8 @@ def login():
 @login_required
 def logout():
     session['logins'] = 0
+
+    logging.warning('SECURITY - Log out [%s, %s, %s]', current_user.id, current_user.email, request.remote_addr)
     logout_user()
     return redirect(url_for('index'))
 
@@ -106,7 +119,7 @@ def logout():
 @users_blueprint.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', name=(current_user.firstname + " " + str(current_user.lastname)))
+    return render_template('profile.html', name=current_user.firstname)
 
 
 # view user account
