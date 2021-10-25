@@ -1,5 +1,6 @@
 # IMPORTS
 from flask import Blueprint, render_template, request, flash
+from flask_login import current_user
 from app import db
 from models import User, Draw
 
@@ -46,7 +47,7 @@ def create_winning_draw():
     submitted_draw.strip()
 
     # create a new draw object with the form data.
-    new_winning_draw = Draw(user_id=0, draw=submitted_draw, win=True, round=round)
+    new_winning_draw = Draw(user_id=None, draw=submitted_draw, win=True, round=round,draw_key=None)
 
     # add the new winning draw to the database
     db.session.add(new_winning_draw)
@@ -67,7 +68,8 @@ def view_winning_draw():
     # if a winning draw exists
     if current_winning_draw:
         # re-render admin page with current winning draw and lottery round
-        return render_template('admin.html', winning_draw=current_winning_draw, name="PLACEHOLDER FOR FIRSTNAME")
+        winnername=User.query.filter_by(id=current_winning_draw.user_id).first()
+        return render_template('admin.html', winning_draw=current_winning_draw, name=winnername.firstname)
 
     # if no winning draw exists, rerender admin page
     flash("No winning draw exists. Please add winning draw.")
