@@ -45,4 +45,5 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(validators=[Required(), Email()])
     password = PasswordField(validators=[Required()])
+    pin = StringField(validators=[Required()])
     submit = SubmitField()

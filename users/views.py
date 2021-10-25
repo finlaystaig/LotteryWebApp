@@ -9,6 +9,7 @@ from lottery.views import lottery
 from models import User
 from users.forms import RegisterForm, LoginForm
 from werkzeug.security import check_password_hash
+import pyotp
 
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
@@ -64,14 +65,17 @@ def login():
 
             return render_template('login.html', form=form)
 
-        login_user(user)
+        if pyotp.TOTP(user.pin_key).verify(form.pin.data):
+            login_user(user)
 
-        user.last_logged_in = user.current_logged_in
-        user.current_logged_in = datetime.now()
-        db.session.add(user)
-        db.session.commit()
+            user.last_logged_in = user.current_logged_in
+            user.current_logged_in = datetime.now()
+            db.session.add(user)
+            db.session.commit()
 
-        return profile()
+            return profile()
+        else:
+            flash("You have supplied an invalid 2FA token!", "danger")
 
     return render_template('login.html', form=form)
 
