@@ -72,9 +72,8 @@ def login():
             if session['logins'] == 3:
                 flash("Too many incorrect logins.")
 
-                logging.warning('SECURITY - Too many incorrect Logins [%s, %s, %s]',form.email.data,
-                                request.remote_addr)
-            elif session['logins']==2:
+                logging.warning('SECURITY - Too many incorrect Logins [%s, %s]', form.username.data, request.remote_addr)
+            elif session['logins'] == 2:
                 flash("Please check ur login details and try again. 1 attempt remaining")
             else:
                 flash('Please check your login details and try again. 2 attempts remaining.')

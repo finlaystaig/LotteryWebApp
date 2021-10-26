@@ -22,8 +22,7 @@ def admin():
 # view all registered users
 @admin_blueprint.route('/view_all_users', methods=['POST'])
 def view_all_users():
-    return render_template('admin.html', name=current_user.firstname,
-                           current_users=User.query.filter_by(role='user').all())
+    return render_template('admin.html', name=current_user.firstname, current_users=User.query.filter_by(role='user').all())
 
 
 # create a new winning draw
