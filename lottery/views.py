@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, request, flash
 from app import db, requires_roles
 from models import Draw, User
 from flask_login import login_required, current_user
+from lottery.forms import lotteryForm, lottery_check
 
 # CONFIG
 lottery_blueprint = Blueprint('lottery', __name__, template_folder='templates')

@@ -5,6 +5,7 @@ from flask import Flask, render_template, request
 from flask_login import LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
+from flask_talisman import Talisman
 
 # CONFIG
 app = Flask(__name__)
@@ -12,20 +13,23 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lottery.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'LongAndRandomSecretKey'
 
+
 def requires_roles(*roles):
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
             if current_user.role not in roles:
                 logging.warning('SECURITY - Unauthorised access attempt [%s, %s, %s, %s]',
-                             current_user.id,
-                             current_user.email,
-                             current_user.role,
-                             request.remote_addr)
+                                current_user.id,
+                                current_user.email,
+                                current_user.role,
+                                request.remote_addr)
                 # Redirect the user to an unauthorised notice!
                 return render_template('403.html')
             return f(*args, **kwargs)
+
         return wrapped
+
     return wrapper
 
 
@@ -45,14 +49,23 @@ logger = logging.getLogger('')
 logger.propagate = False
 logger.addHandler(fh)
 
-
 # initialise database
 db = SQLAlchemy(app)
+
+# security headers
+csp = {
+    'default-src': [
+        '\'self\'',
+        'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'
+    ],
+}
+talisman = Talisman(app, content_security_policy=csp)
 
 
 # HOME PAGE VIEW
 @app.route('/')
 def index():
+    print(request.headers)
     return render_template('index.html')
 
 
@@ -98,9 +111,11 @@ if __name__ == "__main__":
 
     from models import User
 
+
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
+
 
     # BLUEPRINTS
     # import blueprints
