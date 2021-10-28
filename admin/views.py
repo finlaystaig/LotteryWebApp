@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, flash
 from flask_login import current_user
 from app import db, requires_roles
 from lottery.views import decrypt_draws
-from models import User, Draw
+from models import User, Draw, encrypt
 
 # CONFIG
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
@@ -68,7 +68,7 @@ def create_winning_draw():
 def view_winning_draw():
 
     # get winning draw from DB
-    global current_winning_draw
+    current_winning_draw = None
     draws = Draw.query.filter_by(played=False, win=True).all()
     draw_copies = list(map(lambda x: copy.deepcopy(x), draws))
     decrypted_draws = []
@@ -105,6 +105,9 @@ def run_lottery():
     # if current unplayed winning draw exists
     if current_winning_draw:
 
+        current_winning_user = User.query.filter_by(id=current_winning_draw.user_id).first()
+        current_winning_draw.view_draw(current_winning_user.draw_key)
+
         # get all unplayed user draws
         user_draws = Draw.query.filter_by(win=False, played=False).all()
         results = []
@@ -123,6 +126,8 @@ def run_lottery():
                 # get the owning user (instance/object)
                 user = User.query.filter_by(id=draw.user_id).first()
 
+                draw.view_draw(user.draw_key)
+
                 # if user draw matches current unplayed winning draw
                 if draw.draw == current_winning_draw.draw:
 
@@ -132,6 +137,7 @@ def run_lottery():
                     # update draw as a winning draw (this will be used to highlight winning draws in the user's
                     # lottery page)
                     draw.match = True
+                    draw.win = True
 
                 # update draw as played
                 draw.played = True
@@ -140,10 +146,14 @@ def run_lottery():
                 draw.round = current_winning_draw.round
 
                 # commit draw changes to DB
+                draw.encrypt_draw(user.draw_key)
                 db.session.add(draw)
                 db.session.commit()
 
             # if no winners
+            current_winning_draw.encrypt_draw(current_winning_user.draw_key)
+            db.session.add(current_winning_draw)
+            db.session.commit()
             if len(results) == 0:
                 flash("No winners.")
 

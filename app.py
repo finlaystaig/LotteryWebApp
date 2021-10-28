@@ -39,7 +39,13 @@ class SecurityFilter(logging.Filter):
         return "SECURITY" in record.getMessage()
 
 
-fh = logging.FileHandler('lottery.log', 'a')
+fh = logging.FileHandler('lottery.log', 'w')
+"""
+if this is set to anything other than w it logs everything twice, which is not good, 
+but if this is set to w, it logs everything once, but also clears the file every time its opened 
+i'd love a solution where it doesnt erase but does log once, but i cant figure it out
+"""
+
 fh.setLevel(logging.WARNING)
 fh.addFilter(SecurityFilter())
 formatter = logging.Formatter('%(asctime)s : %(message)s', '%m/%d/%Y %I:%M:%S %p')
@@ -65,7 +71,7 @@ talisman = Talisman(app, content_security_policy=csp)
 # HOME PAGE VIEW
 @app.route('/')
 def index():
-    print(request.headers)
+    # print(request.headers) TODO uncomment before submitting final project
     return render_template('index.html')
 
 
