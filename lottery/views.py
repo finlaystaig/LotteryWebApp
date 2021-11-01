@@ -97,7 +97,9 @@ def decrypt_draws(truefalse):
     decrypted_draws = []
 
     for d in draw_copies:
-        user = User.query.filter_by(email=current_user.email).first()
+        user = User.query.filter_by(id=current_user.id).first()
+        print(d.draw,"1")
         d.view_draw(user.draw_key)
+        print(d.draw,"2")
         decrypted_draws.append(d)
     return decrypted_draws
