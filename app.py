@@ -18,7 +18,10 @@ def requires_roles(*roles):
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
-            if current_user.role not in roles:
+            if not current_user.is_authenticated:
+                logging.warning('SECURITY - Unauthorised access attempt by anonymous user [%s]', request.remote_addr)
+                return render_template('403.html')
+            elif current_user.role not in roles:
                 logging.warning('SECURITY - Unauthorised access attempt [%s, %s, %s, %s]',
                                 current_user.id,
                                 current_user.email,
@@ -75,7 +78,7 @@ talisman = Talisman(app, content_security_policy=csp)
 # HOME PAGE VIEW
 @app.route('/')
 def index():
-    # print(request.headers) TODO uncomment before submitting final project
+    print(request.headers)
     return render_template('index.html')
 
 

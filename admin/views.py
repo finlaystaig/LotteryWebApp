@@ -1,6 +1,5 @@
 # IMPORTS
 import copy
-
 from flask import Blueprint, render_template, request, flash
 from flask_login import current_user
 from app import db, requires_roles

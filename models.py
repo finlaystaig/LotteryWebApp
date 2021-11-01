@@ -95,7 +95,7 @@ def init_db():
                  role='admin')
 
     bob = User(email="bob@email.com",
-                   password="Pwd123456&",
+               password="Pwd123456&",
                pin_key="5NMO6KPHI5OY7SYHZJJ5K76RVNQRBYWG",
                firstname="Bob",
                lastname="Brown",

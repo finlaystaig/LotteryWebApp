@@ -75,8 +75,10 @@ def login():
                 logging.warning('SECURITY - Too many incorrect Logins [%s, %s]', form.username.data, request.remote_addr)
             elif session['logins'] == 2:
                 flash("Please check ur login details and try again. 1 attempt remaining")
+                logging.warning('SECURITY - Invalid login attempt, 1 attempt remaining [%s, %s]', form.username.data, request.remote_addr)
             else:
                 flash('Please check your login details and try again. 2 attempts remaining.')
+                logging.warning('SECURITY - Invalid login attempt, 2 attempts remaining [%s, %s]', form.username.data, request.remote_addr)
 
             return render_template('login.html', form=form)
 
