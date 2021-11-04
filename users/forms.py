@@ -17,13 +17,13 @@ class RegisterForm(FlaskForm):
     firstname = StringField(validators=[Required(), character_check])
     lastname = StringField(validators=[Required(), character_check])
     phone = StringField(validators=[Required(), character_check])
-    password = PasswordField(validators=[Required(), Length(min=6, max=12, message="Password must be between 6 and 12 characters in length."), character_check])
+    password = PasswordField(validators=[Required(), Length(min=6, max=12, message="Password must be between 6 and 12 characters in length.")])
     confirm_password = PasswordField(validators=[Required(), EqualTo("password", message="Both passwords fields must be equal.")])
     pin_key = StringField(validators=[Required(), character_check, Length(max=32, min=32, message="Length of PIN key must be 32.")])
     submit = SubmitField(validators=[Required()])
 
     def validate_password(self, password):
-        p = re.compile(r'(?=.*\d)(?=.*[A-Z])(?=.*[a-z])')
+        p = re.compile(r'(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9])')
         if not p.match(self.password.data):
             raise ValidationError("Password must contain at least 1 digit, 1 uppercase letter, 1 lower case letter, "
                                   "and no special characters.")
