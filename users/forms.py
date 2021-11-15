@@ -29,7 +29,7 @@ class RegisterForm(FlaskForm):
                                   "and 1 special character.")
 
     def validate_phone(self, phone):
-        p = re.compile(r'\d\d\d\d-\d\d\d-\d\d\d\d')  # enforces phone number to be in the correct format
+        p = re.compile(r'\d\d\d\d-\d\d\d-\d\d\d\d')  # enforces phone number to be in the correct format (r'\d{4}-\d{3}-\d{4}' also works)
         if not p.match(self.phone.data):
             raise ValidationError("Phone number must be in format of XXXX-XXX-XXXX, including the dashes, and must only be numbers and dashes, (no special characters/letters).")
 
